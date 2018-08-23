@@ -26,14 +26,14 @@
 
     - name: Allow connections on required ports
       block:
-        - shell: firewall-cmd --add-port=2377/tcp
-        - shell: firewall-cmd --add-port=2377/tcp --permanent
-        - shell: firewall-cmd --add-port=7946/tcp
-        - shell: firewall-cmd --add-port=7946/tcp --permanent
-        - shell: firewall-cmd --add-port=7946/udp
-        - shell: firewall-cmd --add-port=7946/udp --permanent
-        - shell: firewall-cmd --add-port=4789/udp
-        - shell: firewall-cmd --add-port=4789/udp --permanent
+        - shell: "firewall-cmd --add-port={{swarm_mgmt_port}}/tcp"
+        - shell: "firewall-cmd --add-port={{swarm_mgmt_port}}/tcp --permanent"
+        - shell: "firewall-cmd --add-port={{swarm_nodes_communication_port}}/tcp"
+        - shell: "firewall-cmd --add-port={{swarm_nodes_communication_port}}/tcp --permanent"
+        - shell: "firewall-cmd --add-port={{swarm_nodes_communication_port}}/udp"
+        - shell: "firewall-cmd --add-port={{swarm_nodes_communication_port}}/udp --permanent"
+        - shell: "firewall-cmd --add-port={{swarm_overlay_network_traffic}}/udp"
+        - shell: "firewall-cmd --add-port={{swarm_overlay_network_traffic}}/udp --permanent"
         - shell: firewall-cmd --reload
       become: yes
 

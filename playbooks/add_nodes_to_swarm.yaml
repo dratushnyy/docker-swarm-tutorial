@@ -1,0 +1,29 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Obtain swarm join token for worker
+      shell: docker swarm join-token --quiet worker
+      register: worker_join_token
+      become: yes
+    - debug: msg="{{ worker_join_token.stdout }}"
+
+- hosts: swarm_workers
+  gather_facts: no
+  vars:
+    worker_join_token: "{{ hostvars[groups['swarm_manager'][0]]['worker_join_token'].stdout }}"
+    swarm_manager_ip: "{{ groups['swarm_manager'][0] }}"
+  tasks:
+    - name: Add worker node to a swarm
+      shell: "docker swarm join --token {{ worker_join_token }} {{ swarm_manager_ip }}:{{ swarm_mgmt_port }}"
+      become: yes
+
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Checking current state of the swarm
+      shell: "docker info --format {% raw %} '{{json .}}' {% endraw %} "
+      register: docker_info
+      become: yes
+
+    - debug: var=docker_info

@@ -1,0 +1,16 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    # NOTE it would be nice to check is this node already a part of swarm before
+    # adding it into new one, since this will lead to error and ignoring errors is a bad practice in general
+    - name: Init docker swarm
+      shell: "docker swarm init --advertise-addr {{ansible_ssh_host}}"
+      become: yes
+
+    - name: Checking current state of the swarm
+      shell: "docker info --format {% raw %} '{{json .}}' {% endraw %} "
+      register: docker_info
+      become: yes
+
+    - debug: msg="{{docker_info}}"

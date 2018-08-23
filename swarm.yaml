@@ -3,6 +3,9 @@ all:
     ansible_user: centos
     ansible_ssh_private_key_file: "{{ inventory_dir }}/keys/deployment_key"
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+    swarm_mgmt_port: 2377
+    swarm_nodes_communication_port: 7946
+    swarm_overlay_network_traffic: 4789
   children:
     local:
       hosts:
@@ -23,3 +26,13 @@ all:
     swarm_node3:
       hosts:
         192.168.185.134
+    swarm_manager:
+      children: swarm_node1
+    swarm_workers:
+      children:
+        worker1:
+        worker2:
+    worker1:
+      children: swarm_node2
+    worker2:
+      children: swarm_node3

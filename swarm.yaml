@@ -11,6 +11,11 @@ all:
       replicas: 1
       container: alpine
       command: ping docker.com
+    redis_service:
+      name: redis
+      replicas: 3
+      update_delay: 10s
+      container: redis:3.0.6
   children:
     local:
       hosts:

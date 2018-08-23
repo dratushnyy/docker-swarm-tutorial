@@ -1,0 +1,28 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Create service in swarm
+      shell: "docker service create --name {{redis_service.name }} --replicas {{ redis_service.replicas }} --update-delay {{ redis_service.update_delay }} {{ redis_service.container }}"
+      become: yes
+
+    - name: Checking currently running serices
+      shell: "docker services ls"
+      register: services_info
+      become: yes
+
+    - debug: var=services_info
+
+    - name: Checking sevice details
+      shell: "docker service inspect {{ redis_service.name }}"
+      register: service_details
+      become: yes
+
+    - debug: var=service_details
+
+    - name: Checking sevice hosts
+      shell: "docker service ps {{ redis_service.name  }}"
+      register: service_hosts
+      become: yes
+
+    - debug: var=service_hosts

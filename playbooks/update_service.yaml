@@ -1,0 +1,7 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Update redis service
+      shell: "docker service update --image {{ image }} {{ service_name }} "
+      become: yes

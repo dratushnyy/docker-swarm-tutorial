@@ -1,0 +1,25 @@
+all:
+  vars:
+    ansible_user: centos
+    ansible_ssh_private_key_file: "{{ inventory_dir }}/keys/deployment_key"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+  children:
+    local:
+      hosts:
+        localhost:
+          ansible_python_interpreter: '/usr/bin/env python'
+          ansible_host: localhost
+    swarm:
+      children:
+        swarm_node1:
+        swarm_node2:
+        swarm_node3:
+    swarm_node1:
+      hosts:
+        192.168.185.133
+    swarm_node2:
+      hosts:
+        192.168.185.135
+    swarm_node3:
+      hosts:
+        192.168.185.134

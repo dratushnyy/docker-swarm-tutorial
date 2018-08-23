@@ -1,0 +1,70 @@
+---
+- hosts: swarm
+  tasks:
+    - name: Update yum
+      shell: yum update -y
+      become: yes
+
+    - name: Install epel
+      yum:
+        name: epel-release
+      become: yes
+
+    - name: Install packages
+      yum:
+        name: "{{ item }}"
+      with_items:
+        - firewalld
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+      become: yes
+
+    - name: Starting firewalld
+      service: name=firewalld state=started enabled=yes
+      become: yes
+
+    - name: Allow connections on required ports
+      block:
+        - shell: firewall-cmd --add-port=2377/tcp
+        - shell: firewall-cmd --add-port=2377/tcp --permanent
+        - shell: firewall-cmd --add-port=7946/tcp
+        - shell: firewall-cmd --add-port=7946/tcp --permanent
+        - shell: firewall-cmd --add-port=7946/udp
+        - shell: firewall-cmd --add-port=7946/udp --permanent
+        - shell: firewall-cmd --add-port=4789/udp
+        - shell: firewall-cmd --add-port=4789/udp --permanent
+        - shell: firewall-cmd --reload
+      become: yes
+
+    - name: Remove old docker packages
+      yum:
+        name: "{{item}}"
+        state: absent
+      with_items:
+        - remove docker
+        - docker-client
+        - docker-client-latest
+        - docker-common
+        - docker-latest
+        - docker-latest-logrotate
+        - docker-logrotate
+        - docker-selinux
+        - docker-engine-selinux
+        - docker-engine
+      become: yes
+
+    - name: Enable docker-ce repo
+      shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      become: yes
+
+    - name: Installing docker-ce
+      block:
+        - name: Install docker-ce
+          yum:
+            name: docker-ce
+        - name: Enable and start docker service
+          service: name=docker state=started enabled=yes
+        - name: Adding current user to docker group
+          shell: usermod -aG docker $USER
+      become: yes

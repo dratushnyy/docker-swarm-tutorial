@@ -6,7 +6,7 @@ all:
     swarm_mgmt_port: 2377
     swarm_nodes_communication_port: 7946
     swarm_overlay_network_traffic: 4789
-    swarm_service:
+    simple_service:
       name: helloworld
       replicas: 1
       container: alpine

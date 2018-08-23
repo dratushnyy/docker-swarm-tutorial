@@ -3,7 +3,7 @@
   gather_facts: no
   tasks:
     - name: Create service in swarm
-      shell: "docker service create --name {{swarm_service.name }} --replicas {{ swarm_service.replicas }} {{ swarm_service.container }} {{ swarm_service.command }}"
+      shell: "docker service create --name {{simple_service.name }} --replicas {{ simple_service.replicas }} {{ simple_service.container }} {{ simple_service.command }}"
       become: yes
 
     - name: Checking currently running serices
@@ -14,14 +14,14 @@
     - debug: var=services_info
 
     - name: Checking sevice details
-      shell: "docker service inspect {{ swarm_service.name }}"
+      shell: "docker service inspect {{ simple_service.name }}"
       register: service_details
       become: yes
 
     - debug: var=service_details
 
     - name: Checking sevice hosts
-      shell: "docker service ps {{ swarm_service.name  }}"
+      shell: "docker service ps {{ simple_service.name  }}"
       register: service_hosts
       become: yes
 

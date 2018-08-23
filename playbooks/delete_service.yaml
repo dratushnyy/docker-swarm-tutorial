@@ -1,0 +1,7 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Create service in swarm
+      shell: " docker service rm {{ service_id }}"
+      become: yes

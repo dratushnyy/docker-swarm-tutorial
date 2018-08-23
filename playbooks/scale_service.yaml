@@ -1,0 +1,14 @@
+---
+- hosts: swarm_manager
+  gather_facts: no
+  tasks:
+    - name: Create service in swarm
+      shell: "docker service scale {{ service_id }}={{ replicas }}"
+      become: yes
+
+    - name: Checking sevice hosts
+      shell: "docker service ps {{ service_id  }}"
+      register: service_hosts
+      become: yes
+
+    - debug: var=service_hosts
